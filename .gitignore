@@ -1,6 +1,7 @@
 /node_modules
 /.next/
 /out/
+.vercel
 
 # Secrets — never commit (Pages/CI use dashboard env vars instead)
 .env
