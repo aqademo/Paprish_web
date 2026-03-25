@@ -1,47 +1,84 @@
-export const products = [
+export type Product = {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  price: string;
+  /** Numeric INR for filters / sort on the shop page */
+  priceInr: number;
+  category: string;
+  badge?: string;
+};
+
+/** Paprish pack photography — cycles across the collection grid */
+const PACK_IMG = [
+  "/products/IMG_3740.PNG",
+  "/products/IMG_3741.PNG",
+  "/products/IMG_3742.PNG",
+] as const;
+
+export const products: Product[] = [
   {
     id: "1",
     name: "Garam Masala",
     description: "Warm, aromatic blend for curries and rice.",
-    image:
-      "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=800&q=80",
+    image: PACK_IMG[0],
+    price: "₹299",
+    priceInr: 299,
+    category: "Masalas",
+    badge: "Bestseller",
   },
   {
     id: "2",
     name: "Turmeric Powder",
     description: "Vibrant, single-origin turmeric with earthy depth.",
-    image:
-      "https://images.unsplash.com/photo-1615485500704-8e990f9900f7?auto=format&fit=crop&w=800&q=80",
+    image: PACK_IMG[1],
+    price: "₹249",
+    priceInr: 249,
+    category: "Masalas",
+    badge: "Farm fresh",
   },
   {
     id: "3",
     name: "Red Chili Powder",
     description: "Sun-dried chilies, stone-ground for bold heat.",
-    image:
-      "https://images.unsplash.com/photo-1509352840210-3e7d8be7f0ad?auto=format&fit=crop&w=800&q=80",
+    image: PACK_IMG[2],
+    price: "₹189",
+    priceInr: 189,
+    category: "Masalas",
   },
   {
     id: "4",
     name: "Whole Coriander",
     description: "Citrusy aroma — toast & grind fresh for peak flavor.",
-    image:
-      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80",
+    image: PACK_IMG[0],
+    price: "₹159",
+    priceInr: 159,
+    category: "Whole spices",
   },
   {
     id: "5",
     name: "Cumin Whole",
     description: "Cooling, nutty notes for dals and tadkas.",
-    image:
-      "https://images.unsplash.com/photo-1606800052052-a8366c3db0c6?auto=format&fit=crop&w=800&q=80",
+    image: PACK_IMG[1],
+    price: "₹179",
+    priceInr: 179,
+    category: "Whole spices",
   },
   {
     id: "6",
     name: "Biryani Masala",
     description: "Layered spices crafted for fragrant, slow-cooked rice.",
-    image:
-      "https://images.unsplash.com/photo-1606787366850-de633012417b?auto=format&fit=crop&w=800&q=80",
+    image: PACK_IMG[2],
+    price: "₹329",
+    priceInr: 329,
+    category: "Masalas",
+    badge: "Just in",
   },
 ];
+
+/** First three items — featured shop row above Story */
+export const featuredProducts = products.slice(0, 3);
 
 export const whyChoose = [
   {

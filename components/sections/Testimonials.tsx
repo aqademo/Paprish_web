@@ -2,46 +2,53 @@
 
 import { motion } from "framer-motion";
 import { fadeInUp, staggerContainer } from "@/lib/motion";
-import { SectionHeading } from "@/components/ui/SectionHeading";
 import { testimonials } from "@/data/content";
 
 export function Testimonials() {
   return (
-    <section
-      id="reviews"
-      className="scroll-mt-24 bg-paprish-cream py-24 md:py-32"
-    >
-      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-        <SectionHeading
-          eyebrow="Voices"
-          title="Loved by cooks who care about flavor"
-        />
+    <section id="reviews" className="scroll-mt-24 bg-neutral-950 py-24 md:py-32">
+      <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-xs font-semibold uppercase tracking-[0.35em] text-[#b91c1c]"
+        >
+          Voices
+        </motion.p>
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, delay: 0.05 }}
+          className="mt-4 font-display text-3xl font-bold uppercase tracking-tight text-white md:text-4xl"
+        >
+          What people say
+        </motion.h2>
 
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-60px" }}
-          className="mt-16 grid gap-6 md:grid-cols-3"
+          className="mt-16 grid gap-10 md:grid-cols-3 md:gap-8"
         >
           {testimonials.map((t, i) => (
             <motion.figure
               key={t.name}
               variants={fadeInUp}
               transition={{ delay: i * 0.08 }}
-              className="flex flex-col rounded-2xl border border-stone-200/80 bg-white p-8 shadow-sm"
+              className="flex flex-col border border-white/10 bg-black/40 p-8"
             >
-              <div className="text-[#b91c1c]" aria-hidden>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M7 17h3l1-4H7v-4h5l1-4H5v12h2zm8 0h3l1-4h-4v-4h5l1-4h-8v12h2z" />
-                </svg>
-              </div>
-              <blockquote className="mt-5 flex-1 text-base leading-relaxed text-stone-700">
+              <blockquote className="flex-1 text-sm leading-relaxed text-white/70">
                 “{t.quote}”
               </blockquote>
-              <figcaption className="mt-8 border-t border-stone-100 pt-6">
-                <p className="font-display font-semibold text-stone-900">{t.name}</p>
-                <p className="text-sm text-stone-500">{t.role}</p>
+              <figcaption className="mt-8 border-t border-white/10 pt-6">
+                <p className="font-display text-sm font-semibold uppercase tracking-wide text-white">
+                  {t.name}
+                </p>
+                <p className="mt-1 text-xs text-white/40">{t.role}</p>
               </figcaption>
             </motion.figure>
           ))}
