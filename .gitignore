@@ -1,5 +1,9 @@
 /node_modules
 /.next/
 /out/
+
+# Secrets — never commit (Pages/CI use dashboard env vars instead)
+.env
+.env.local
 .env*.local
 *.tsbuildinfo
