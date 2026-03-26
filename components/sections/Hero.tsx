@@ -2,30 +2,76 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { staggerContainer, fadeInUp } from "@/lib/motion";
 
 const HERO_VIDEO = "/imagesvideos/12351606_3840_2160_30fps.mp4";
 
+/** iOS / mobile Safari only allows muted + inline autoplay; must be set before play(). */
+function prepareVideoForMobileAutoplay(v: HTMLVideoElement) {
+  v.muted = true;
+  v.defaultMuted = true;
+  v.setAttribute("muted", "");
+  v.setAttribute("playsinline", "");
+  v.setAttribute("webkit-playsinline", "");
+  v.playsInline = true;
+}
+
 export function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  useLayoutEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    prepareVideoForMobileAutoplay(v);
+  }, []);
 
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
 
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const tryPlay = () => {
+      if (mq.matches) return;
+      prepareVideoForMobileAutoplay(v);
+      void v.play().catch(() => {});
+    };
+
     const sync = () => {
       if (mq.matches) {
         v.pause();
       } else {
-        void v.play().catch(() => {});
+        tryPlay();
       }
     };
 
+    const onCanPlay = () => tryPlay();
+    const onVisibility = () => {
+      if (!document.hidden && !mq.matches) tryPlay();
+    };
+
+    /** Some mobile browsers defer autoplay until first user gesture; muted play usually works without this. */
+    const onFirstTouch = () => {
+      tryPlay();
+      document.removeEventListener("touchstart", onFirstTouch);
+    };
+
+    v.addEventListener("canplay", onCanPlay);
+    v.addEventListener("loadeddata", onCanPlay);
+    document.addEventListener("visibilitychange", onVisibility);
+    document.addEventListener("touchstart", onFirstTouch, { passive: true, capture: true });
+
     sync();
     mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
+
+    return () => {
+      v.removeEventListener("canplay", onCanPlay);
+      v.removeEventListener("loadeddata", onCanPlay);
+      document.removeEventListener("visibilitychange", onVisibility);
+      document.removeEventListener("touchstart", onFirstTouch, { capture: true });
+      mq.removeEventListener("change", sync);
+    };
   }, []);
 
   return (
@@ -44,7 +90,7 @@ export function Hero() {
       >
         <video
           ref={videoRef}
-          className="absolute inset-0 h-full w-full object-cover"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
           style={{
             position: "absolute",
             inset: 0,
@@ -57,6 +103,8 @@ export function Hero() {
           loop
           playsInline
           preload="auto"
+          controls={false}
+          disablePictureInPicture
           aria-hidden
         >
           <source src={HERO_VIDEO} type="video/mp4" />
