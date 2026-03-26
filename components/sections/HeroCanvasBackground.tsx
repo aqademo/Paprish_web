@@ -21,8 +21,8 @@ function drawCover(
 }
 
 /**
- * iOS draws the native play overlay on visible <video>. Decode in a 1×1 off-screen
- * muted video and mirror frames to <canvas> — users see motion without the play button.
+ * Off-screen muted video → canvas (no iOS play overlay).
+ * Uses requestVideoFrameCallback when available (synced to decode, less CPU than 60fps RAF).
  */
 export function HeroCanvasBackground() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -35,13 +35,16 @@ export function HeroCanvasBackground() {
     const canvas = canvasRef.current;
     if (!box || !video || !canvas) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: false, desynchronized: true });
     if (!ctx) return;
 
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     let raf = 0;
+    let vfcId = 0;
     let playBurst: ReturnType<typeof setInterval> | undefined;
     let burstTimeout: ReturnType<typeof setTimeout> | undefined;
+    let paintRaf = 0;
+    let armCoalesce = 0;
 
     const resize = () => {
       const rect = box.getBoundingClientRect();
@@ -55,7 +58,6 @@ export function HeroCanvasBackground() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    let paintRaf = 0;
     const paint = () => {
       const w = box.clientWidth;
       const h = box.clientHeight;
@@ -73,23 +75,43 @@ export function HeroCanvasBackground() {
       });
     };
 
-    const loop = () => {
+    const stopDrawLoop = () => {
+      if (raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      if (vfcId && "cancelVideoFrameCallback" in video) {
+        video.cancelVideoFrameCallback(vfcId);
+        vfcId = 0;
+      }
+    };
+
+    const rafFallbackLoop = () => {
       if (video.paused || mq.matches) {
         raf = 0;
         return;
       }
       paint();
-      raf = requestAnimationFrame(loop);
+      raf = requestAnimationFrame(rafFallbackLoop);
     };
 
-    const startLoop = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(loop);
-    };
+    const startDrawLoop = () => {
+      stopDrawLoop();
+      if (video.paused || mq.matches) return;
 
-    const stopLoop = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = 0;
+      if (typeof video.requestVideoFrameCallback === "function") {
+        const onFrame = () => {
+          if (video.paused || mq.matches) {
+            vfcId = 0;
+            return;
+          }
+          paint();
+          vfcId = video.requestVideoFrameCallback(onFrame);
+        };
+        vfcId = video.requestVideoFrameCallback(onFrame);
+      } else {
+        raf = requestAnimationFrame(rafFallbackLoop);
+      }
     };
 
     const armAndPlay = async () => {
@@ -112,7 +134,7 @@ export function HeroCanvasBackground() {
 
       if (mq.matches) {
         video.pause();
-        stopLoop();
+        stopDrawLoop();
         paint();
         return;
       }
@@ -120,7 +142,7 @@ export function HeroCanvasBackground() {
       try {
         await video.play();
       } catch {
-        /* iOS may defer; burst retry */
+        /* ignore */
       }
 
       playBurst = setInterval(() => {
@@ -139,8 +161,17 @@ export function HeroCanvasBackground() {
       }, 12000);
     };
 
-    const onPlaying = () => startLoop();
-    const onPause = () => stopLoop();
+    /** Coalesce many media events into one armAndPlay per frame (less jank). */
+    const scheduleArm = () => {
+      if (armCoalesce) return;
+      armCoalesce = requestAnimationFrame(() => {
+        armCoalesce = 0;
+        void armAndPlay();
+      });
+    };
+
+    const onPlaying = () => startDrawLoop();
+    const onPause = () => stopDrawLoop();
 
     resize();
     const ro = new ResizeObserver(() => {
@@ -149,12 +180,8 @@ export function HeroCanvasBackground() {
     });
     ro.observe(box);
 
-    /** Start playback ASAP — metadata is enough to call play(); data may still be buffering. */
-    const onLoaded = () => void armAndPlay();
-    video.addEventListener("loadedmetadata", onLoaded);
-    video.addEventListener("loadeddata", onLoaded);
-    video.addEventListener("canplay", onLoaded);
-    video.addEventListener("canplaythrough", onLoaded);
+    video.addEventListener("loadedmetadata", scheduleArm);
+    video.addEventListener("canplay", scheduleArm);
     video.addEventListener("progress", schedulePaint);
     video.addEventListener("playing", onPlaying);
     video.addEventListener("pause", onPause);
@@ -173,14 +200,13 @@ export function HeroCanvasBackground() {
 
     return () => {
       if (paintRaf) cancelAnimationFrame(paintRaf);
+      if (armCoalesce) cancelAnimationFrame(armCoalesce);
       if (playBurst) clearInterval(playBurst);
       if (burstTimeout) clearTimeout(burstTimeout);
-      stopLoop();
+      stopDrawLoop();
       ro.disconnect();
-      video.removeEventListener("loadedmetadata", onLoaded);
-      video.removeEventListener("loadeddata", onLoaded);
-      video.removeEventListener("canplay", onLoaded);
-      video.removeEventListener("canplaythrough", onLoaded);
+      video.removeEventListener("loadedmetadata", scheduleArm);
+      video.removeEventListener("canplay", scheduleArm);
       video.removeEventListener("progress", schedulePaint);
       video.removeEventListener("playing", onPlaying);
       video.removeEventListener("pause", onPause);

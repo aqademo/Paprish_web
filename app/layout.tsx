@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Dancing_Script, Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { CRITICAL_SHELL_CSS } from "@/lib/critical-shell-css";
-import { HERO_BG_POSTER, HERO_BG_VIDEO } from "@/lib/site-media";
+import { HERO_BG_VIDEO } from "@/lib/site-media";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({
@@ -44,7 +44,6 @@ export default function RootLayout({
     >
       <head>
         <link rel="preload" href={HERO_BG_VIDEO} as="video" type="video/mp4" />
-        <link rel="preload" href={HERO_BG_POSTER} as="image" />
       </head>
       {/* Inline shell: runs even if the main webpack CSS chunk fails (stale .next / dev HMR). */}
       <body
