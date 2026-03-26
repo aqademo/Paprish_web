@@ -4,8 +4,7 @@ import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { useState } from "react";
-
-const WA = "919000000000";
+import { whatsappLink } from "@/lib/whatsapp";
 
 export default function CheckoutPage() {
   const [name, setName] = useState("");
@@ -27,11 +26,7 @@ export default function CheckoutPage() {
       .filter(Boolean)
       .join("\n");
 
-    window.open(
-      `https://wa.me/${WA}?text=${encodeURIComponent(text)}`,
-      "_blank",
-      "noopener,noreferrer"
-    );
+    window.open(whatsappLink(text), "_blank", "noopener,noreferrer");
   };
 
   return (

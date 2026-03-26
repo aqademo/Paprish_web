@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { fadeInUp, staggerContainer } from "@/lib/motion";
+import { WHATSAPP_CHAT_BASE } from "@/lib/whatsapp";
 
 const img = "/newsletter-spices.jpg";
 
@@ -66,7 +67,7 @@ export function NewsletterSplit() {
               Shop Now
             </Link>
             <a
-              href="https://wa.me/919000000000"
+              href={WHATSAPP_CHAT_BASE}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50 underline-offset-4 hover:text-white"

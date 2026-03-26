@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { WHATSAPP_CHAT_BASE } from "@/lib/whatsapp";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -28,7 +29,7 @@ export function Footer() {
               Terms
             </Link>
             <a
-              href="https://wa.me/919000000000"
+              href={WHATSAPP_CHAT_BASE}
               target="_blank"
               rel="noopener noreferrer"
               className="transition-colors hover:text-neutral-200"

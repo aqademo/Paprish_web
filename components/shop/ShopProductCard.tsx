@@ -4,9 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart, ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { whatsappBuyProduct, whatsappCartProduct } from "@/lib/whatsapp";
 import type { Product } from "@/data/content";
-
-const WA = "919000000000";
 
 type Props = {
   product: Product;
@@ -16,12 +15,8 @@ type Props = {
 };
 
 export function ShopProductCard({ product: p, className, variant = "compact" }: Props) {
-  const waBuy = `https://wa.me/${WA}?text=${encodeURIComponent(
-    `Hi Paprish — I'd like to buy: ${p.name} (${p.price})`
-  )}`;
-  const waCart = `https://wa.me/${WA}?text=${encodeURIComponent(
-    `Add to cart: ${p.name} — ${p.price}`
-  )}`;
+  const waBuy = whatsappBuyProduct(p);
+  const waCart = whatsappCartProduct(p);
 
   if (variant === "plp") {
     return (

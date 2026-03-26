@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion, type Variants } from "framer-motion";
 import { fadeInUp } from "@/lib/motion";
+import { WHATSAPP_CHAT_BASE } from "@/lib/whatsapp";
 
 /** Parent stays opaque — `staggerContainer` used to set parent opacity 0, which hid all copy if motion stalled. */
 const heroStagger: Variants = {
@@ -51,10 +52,10 @@ export function HeroContent() {
           >
             Shop Now
           </Link>
-          <a
-            href="https://wa.me/919000000000"
-            target="_blank"
-            rel="noopener noreferrer"
+            <a
+              href={WHATSAPP_CHAT_BASE}
+              target="_blank"
+              rel="noopener noreferrer"
             className="inline-flex rounded-full border border-white/25 px-8 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white/90 transition hover:border-white/60"
           >
             WhatsApp

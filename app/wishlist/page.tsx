@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { WHATSAPP_CHAT_BASE } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "Wishlist | Paprish",
@@ -32,7 +33,7 @@ export default function WishlistPage() {
               Browse shop
             </Link>
             <a
-              href="https://wa.me/919000000000"
+              href={WHATSAPP_CHAT_BASE}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex rounded-full border border-white/25 px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] text-white transition hover:border-white/50"

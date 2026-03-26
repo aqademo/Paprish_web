@@ -5,8 +5,11 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Heart, ShoppingCart } from "lucide-react";
 import type { Product } from "@/data/content";
-
-const WA = "919000000000";
+import {
+  whatsappBuyProduct,
+  whatsappCartProduct,
+  whatsappInterestProduct,
+} from "@/lib/whatsapp";
 
 type Props = {
   products: Product[];
@@ -59,12 +62,8 @@ export function ProductCarousel({ products }: Props) {
           className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-5 px-5 pb-3 [scrollbar-width:none] sm:mx-0 sm:scroll-px-0 sm:px-0 sm:pl-0 [&::-webkit-scrollbar]:hidden"
         >
           {products.map((p, index) => {
-            const waBuy = `https://wa.me/${WA}?text=${encodeURIComponent(
-              `Hi Paprish — I'd like to buy: ${p.name} (${p.price})`
-            )}`;
-            const waCart = `https://wa.me/${WA}?text=${encodeURIComponent(
-              `Add to cart: ${p.name} — ${p.price}`
-            )}`;
+            const waBuy = whatsappBuyProduct(p);
+            const waCart = whatsappCartProduct(p);
 
             return (
               <article
@@ -101,7 +100,7 @@ export function ProductCarousel({ products }: Props) {
                     aria-label={`Wishlist ${p.name}`}
                     onClick={() =>
                       window.open(
-                        `https://wa.me/${WA}?text=${encodeURIComponent(`Interested in: ${p.name} (${p.price})`)}`,
+                        whatsappInterestProduct(p),
                         "_blank",
                         "noopener,noreferrer"
                       )

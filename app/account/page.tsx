@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { WHATSAPP_CHAT_BASE } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "Account | Paprish",
@@ -23,7 +24,7 @@ export default function AccountPage() {
           <p className="mt-4 text-sm leading-relaxed text-white/55">
             Online accounts are coming soon. Order today via{" "}
             <a
-              href="https://wa.me/919000000000"
+              href={WHATSAPP_CHAT_BASE}
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#b91c1c] underline-offset-4 hover:underline"
