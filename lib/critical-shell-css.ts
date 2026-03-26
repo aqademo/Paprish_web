@@ -35,4 +35,6 @@ button{font:inherit;cursor:pointer}
 @keyframes paprish-marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .paprish-marquee-band{border-top:1px solid rgba(0,0,0,0.1);border-bottom:1px solid rgba(0,0,0,0.1);background:#f59e0b;padding:1rem 0}
 .paprish-marquee-script{border-top:1px solid rgba(255,255,255,0.1);border-bottom:1px solid rgba(255,255,255,0.1);background:#000;padding:1.25rem 0}
+video.hero-bg-video::-webkit-media-controls,video.hero-bg-video::-webkit-media-controls-enclosure,video.hero-bg-video::-webkit-media-controls-panel,video.hero-bg-video::-webkit-media-controls-start-playback-button,video.hero-bg-video::-webkit-media-controls-overlay-play-button,video.hero-bg-video::-webkit-media-controls-overlay-enclosure{display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+video.hero-bg-video{-webkit-tap-highlight-color:transparent}
 `;

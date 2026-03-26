@@ -141,3 +141,20 @@ button {
     text-wrap: balance;
   }
 }
+
+/* Hero: hide WebKit/iOS default play overlay when using muted inline autoplay (no controls). */
+video.hero-bg-video::-webkit-media-controls,
+video.hero-bg-video::-webkit-media-controls-enclosure,
+video.hero-bg-video::-webkit-media-controls-panel,
+video.hero-bg-video::-webkit-media-controls-start-playback-button,
+video.hero-bg-video::-webkit-media-controls-overlay-play-button,
+video.hero-bg-video::-webkit-media-controls-overlay-enclosure {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+video.hero-bg-video {
+  -webkit-tap-highlight-color: transparent;
+}
