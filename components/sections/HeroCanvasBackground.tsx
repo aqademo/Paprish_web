@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-
-/** Served from `public/imagesvideos/` → URL `/imagesvideos/...` */
-const HERO_VIDEO = "/imagesvideos/12351606_3840_2160_30fps.mp4";
-const HERO_POSTER = "/imagesvideos/vibrant-colors-spices-row-generated-by-ai.jpg";
+import { HERO_BG_POSTER, HERO_BG_VIDEO } from "@/lib/site-media";
 
 function drawCover(
   video: HTMLVideoElement,
@@ -58,12 +55,22 @@ export function HeroCanvasBackground() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
+    let paintRaf = 0;
     const paint = () => {
       const w = box.clientWidth;
       const h = box.clientHeight;
-      if (w && h && video.readyState >= 2) {
+      if (!w || !h) return;
+      if (video.readyState >= 2) {
         drawCover(video, ctx, w, h);
       }
+    };
+
+    const schedulePaint = () => {
+      if (paintRaf) return;
+      paintRaf = requestAnimationFrame(() => {
+        paintRaf = 0;
+        paint();
+      });
     };
 
     const loop = () => {
@@ -122,14 +129,14 @@ export function HeroCanvasBackground() {
           clearInterval(playBurst);
           playBurst = undefined;
         }
-      }, 200);
+      }, 80);
       burstTimeout = setTimeout(() => {
         if (playBurst) {
           clearInterval(playBurst);
           playBurst = undefined;
         }
         burstTimeout = undefined;
-      }, 8000);
+      }, 12000);
     };
 
     const onPlaying = () => startLoop();
@@ -142,11 +149,17 @@ export function HeroCanvasBackground() {
     });
     ro.observe(box);
 
+    /** Start playback ASAP — metadata is enough to call play(); data may still be buffering. */
     const onLoaded = () => void armAndPlay();
+    video.addEventListener("loadedmetadata", onLoaded);
     video.addEventListener("loadeddata", onLoaded);
     video.addEventListener("canplay", onLoaded);
+    video.addEventListener("canplaythrough", onLoaded);
+    video.addEventListener("progress", schedulePaint);
     video.addEventListener("playing", onPlaying);
     video.addEventListener("pause", onPause);
+
+    void video.play().catch(() => {});
 
     const onVis = () => {
       if (!document.hidden) void armAndPlay();
@@ -159,12 +172,16 @@ export function HeroCanvasBackground() {
     void armAndPlay();
 
     return () => {
+      if (paintRaf) cancelAnimationFrame(paintRaf);
       if (playBurst) clearInterval(playBurst);
       if (burstTimeout) clearTimeout(burstTimeout);
       stopLoop();
       ro.disconnect();
+      video.removeEventListener("loadedmetadata", onLoaded);
       video.removeEventListener("loadeddata", onLoaded);
       video.removeEventListener("canplay", onLoaded);
+      video.removeEventListener("canplaythrough", onLoaded);
+      video.removeEventListener("progress", schedulePaint);
       video.removeEventListener("playing", onPlaying);
       video.removeEventListener("pause", onPause);
       document.removeEventListener("visibilitychange", onVis);
@@ -180,12 +197,12 @@ export function HeroCanvasBackground() {
     >
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${HERO_POSTER})` }}
+        style={{ backgroundImage: `url(${HERO_BG_POSTER})` }}
         aria-hidden
       />
       <video
         ref={videoRef}
-        src={`${HERO_VIDEO}#t=0.001`}
+        src={HERO_BG_VIDEO}
         className="pointer-events-none"
         style={{
           position: "absolute",
