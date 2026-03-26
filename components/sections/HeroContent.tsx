@@ -1,17 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { staggerContainer, fadeInUp } from "@/lib/motion";
+import { motion, type Variants } from "framer-motion";
+import { fadeInUp } from "@/lib/motion";
+
+/** Parent stays opaque — `staggerContainer` used to set parent opacity 0, which hid all copy if motion stalled. */
+const heroStagger: Variants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.12, delayChildren: 0.08 },
+  },
+};
 
 export function HeroContent() {
   return (
-    <div className="relative mx-auto flex min-h-[100svh] max-w-[1600px] flex-col justify-end px-5 pb-20 pt-36 sm:px-8 sm:pt-40 lg:justify-center lg:px-12 lg:pb-0">
+    <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-[1600px] flex-col justify-end px-5 pb-20 pt-36 sm:px-8 sm:pt-40 lg:justify-center lg:px-12 lg:pb-0">
       <motion.div
-        variants={staggerContainer}
+        variants={heroStagger}
         initial="hidden"
         animate="visible"
-        className="max-w-4xl"
+        className="relative max-w-4xl"
       >
         <motion.p
           variants={fadeInUp}

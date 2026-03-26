@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
+/** Served from `public/imagesvideos/` → URL `/imagesvideos/...` */
 const HERO_VIDEO = "/imagesvideos/12351606_3840_2160_30fps.mp4";
 const HERO_POSTER = "/imagesvideos/vibrant-colors-spices-row-generated-by-ai.jpg";
 
@@ -172,7 +173,11 @@ export function HeroCanvasBackground() {
   }, []);
 
   return (
-    <div ref={containerRef} className="absolute inset-0" style={{ position: "absolute", inset: 0 }}>
+    <div
+      ref={containerRef}
+      className="absolute inset-0 z-0"
+      style={{ position: "absolute", inset: 0 }}
+    >
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${HERO_POSTER})` }}
@@ -207,8 +212,8 @@ export function HeroCanvasBackground() {
         className="absolute inset-0 z-[1] h-full w-full object-cover"
         aria-hidden
       />
-      <div className="absolute inset-0 z-[2] bg-gradient-to-r from-black/85 via-black/55 to-black/25" />
-      <div className="absolute inset-0 z-[2] bg-gradient-to-t from-black/70 via-transparent to-black/40" />
+      <div className="absolute inset-0 z-[2] bg-gradient-to-r from-black/55 via-black/35 to-black/15" />
+      <div className="absolute inset-0 z-[2] bg-gradient-to-t from-black/45 via-transparent to-black/25" />
     </div>
   );
 }
