@@ -1,6 +1,5 @@
-import { HeroBackground } from "@/components/sections/HeroBackground";
+import { HeroCanvasBackground } from "@/components/sections/HeroCanvasBackground";
 import { HeroContent } from "@/components/sections/HeroContent";
-import { HeroVideoClient } from "@/components/sections/HeroVideoClient";
 
 export function Hero() {
   return (
@@ -13,8 +12,7 @@ export function Hero() {
         overflow: "hidden",
       }}
     >
-      <HeroBackground />
-      <HeroVideoClient />
+      <HeroCanvasBackground />
       <HeroContent />
     </section>
   );
